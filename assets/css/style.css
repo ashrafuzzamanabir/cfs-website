@@ -154,6 +154,53 @@ footer {
     color: var(--secondary-color);
     padding: 2rem 0;
     text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+}
+
+footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: var(--accent-color);
+}
+
+/* Main Content */
+.main-content {
+    min-height: calc(100vh - 120px); /* Subtract header and footer height */
+    padding-bottom: 100px; /* Add padding to prevent footer overlap */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Contact Page Specific */
+.contact-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    margin-top: 60px;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    width: 100%;
 }
 
 /* Responsive Design */
@@ -179,5 +226,13 @@ footer {
 
     .slide-caption h2 {
         font-size: 1.2rem;
+    }
+
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .main-content {
+        padding-bottom: 150px; /* More padding for mobile */
     }
 } 

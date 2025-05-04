@@ -1,5 +1,5 @@
 <?php
-require_once '../config/db_config.php';
+require_once __DIR__ . '/../config/db_config.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,46 +13,92 @@ require_once '../config/db_config.php';
             padding: 2rem;
             margin-top: 60px;
         }
-        .year-section {
-            margin-bottom: 4rem;
-        }
-        .year-title {
+        .year-group {
             margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--accent-color);
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 4px;
         }
-        .members-grid {
+        .year-group h2 {
+            margin-bottom: 1rem;
+            color: #333;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 0.5rem;
+        }
+        .committee-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 2rem;
+            gap: 1rem;
         }
-        .member-card {
+        .committee-member {
             background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        .member-card:hover {
-            transform: translateY(-5px);
-        }
-        .member-image {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-        }
-        .member-info {
             padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .committee-member img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            border: 3px solid var(--accent-color);
+        }
+        .committee-member h3 {
+            margin: 0 0 0.5rem 0;
+            color: var(--accent-color);
+        }
+        .committee-member p {
+            margin: 0;
+            color: #666;
+        }
+        /* Advisor Section Styles */
+        .advisor-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .advisor-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            align-items: center;
+        }
+        .advisor-image {
             text-align: center;
         }
-        .member-name {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-color);
+        .advisor-image img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid var(--accent-color);
         }
-        .member-position {
+        .advisor-info h2 {
             color: var(--accent-color);
-            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        .advisor-info h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .advisor-message {
+            font-style: italic;
+            line-height: 1.8;
+            color: #666;
+            margin-top: 1rem;
+        }
+        @media (max-width: 768px) {
+            .advisor-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -64,52 +110,68 @@ require_once '../config/db_config.php';
         <ul class="nav-links">
             <li><a href="../index.php">Home</a></li>
             <li><a href="about.php">About</a></li>
-            <li><a href="committee.php" class="active">Committee</a></li>
             <li><a href="gallery.php">Gallery</a></li>
+            <li><a href="committee.php">Committee</a></li>
             <li><a href="contact.php">Contact</a></li>
         </ul>
     </nav>
 
-    <div class="committee-container">
-        <?php
-        $sql = "SELECT DISTINCT year FROM committee_members ORDER BY year DESC";
-        $years_result = mysqli_query($conn, $sql);
-        
-        while($year_row = mysqli_fetch_assoc($years_result)) {
-            $year = $year_row['year'];
-            echo '<div class="year-section">';
-            echo '<h2 class="year-title">Committee ' . $year . '</h2>';
-            echo '<div class="members-grid">';
+    <div class="main-content">
+        <div class="committee-container">
+            <!-- Advisor Section -->
+            <div class="advisor-section">
+                <div class="advisor-grid">
+                    <div class="advisor-image">
+                        <img src="../assets/uploads/committee/68153a1c5bce3.jpg" alt="Advisor" onerror="this.src='https://via.placeholder.com/200x200?text=Advisor'">
+                    </div>
+                    <div class="advisor-info">
+                        <h2>Message from Our Advisor</h2>
+                        <h3>Dr. Md. Shahidul Islam</h3>
+                        <p>Professor, Department of Computer Science and Engineering</p>
+                        <div class="advisor-message">
+                            <p>"It gives me immense pleasure to see the Chokh Film Society growing and thriving at SUST. As the advisor, I have witnessed the dedication and passion of our members in promoting film culture and artistic expression. The society has become a platform for students to explore their creativity, develop their skills, and contribute to the cultural landscape of our university.</p>
+                            <p>Through various events, screenings, and workshops, Chokh Film Society has successfully created a space for meaningful discussions about cinema and its impact on society. I am proud of the achievements of our members and look forward to seeing more innovative initiatives in the future."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h1>Committee Members</h1>
+            <?php
+            $sql = "SELECT * FROM committee_members ORDER BY year DESC, post ASC";
+            $result = mysqli_query($conn, $sql);
             
-            $members_sql = "SELECT * FROM committee_members WHERE year = ? ORDER BY position";
-            $stmt = mysqli_prepare($conn, $members_sql);
-            mysqli_stmt_bind_param($stmt, "i", $year);
-            mysqli_stmt_execute($stmt);
-            $members_result = mysqli_stmt_get_result($stmt);
-            
-            while($member = mysqli_fetch_assoc($members_result)) {
-                echo '<div class="member-card">';
-                if($member['image_path']) {
-                    echo '<img src="../' . $member['image_path'] . '" alt="' . $member['name'] . '" class="member-image">';
-                } else {
-                    echo '<img src="../assets/images/default-avatar.jpg" alt="Default Avatar" class="member-image">';
+            $current_year = null;
+            while($row = mysqli_fetch_assoc($result)) {
+                if($current_year !== $row['year']) {
+                    if($current_year !== null) {
+                        echo "</div></div>";
+                    }
+                    echo "<div class='year-group'>";
+                    echo "<h2>Year " . $row['year'] . "</h2>";
+                    echo "<div class='committee-grid'>";
+                    $current_year = $row['year'];
                 }
-                echo '<div class="member-info">';
-                echo '<h3 class="member-name">' . $member['name'] . '</h3>';
-                echo '<p class="member-position">' . $member['position'] . '</p>';
-                echo '</div>';
-                echo '</div>';
+                echo "<div class='committee-member'>";
+                if($row['image_path']) {
+                    echo "<img src='../" . htmlspecialchars($row['image_path']) . "' alt='" . htmlspecialchars($row['name']) . "'>";
+                } else {
+                    echo "<img src='../assets/images/default-avatar.png' alt='" . htmlspecialchars($row['name']) . "'>";
+                }
+                echo "<h3>" . htmlspecialchars($row['name']) . "</h3>";
+                echo "<p>" . htmlspecialchars($row['post']) . "</p>";
+                echo "</div>";
             }
-            
-            echo '</div>';
-            echo '</div>';
-        }
-        ?>
+            if($current_year !== null) {
+                echo "</div></div>";
+            }
+            ?>
+        </div>
     </div>
 
     <footer>
         <div class="container">
-            <p>&copy; <?php echo date('Y'); ?> Chokh Film Society - SUST. All rights reserved.</p>
+            <p>&copy; <?php echo date('Y'); ?> Chokh Film Society - SUST. All rights reserved. Built by <a href="https://www.facebook.com/Idealtech.dev" target="_blank">Ideal Tech Ltd.</a></p>
         </div>
     </footer>
 </body>

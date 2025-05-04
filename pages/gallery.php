@@ -104,7 +104,7 @@ require_once '../config/db_config.php';
 
     <footer>
         <div class="container">
-            <p>&copy; <?php echo date('Y'); ?> Chokh Film Society - SUST. All rights reserved.</p>
+        <p>&copy; <?php echo date('Y'); ?> Chokh Film Society - SUST. All rights reserved. Built by <a href="https://www.facebook.com/Idealtech.dev" target="_blank">Ideal Tech Ltd.</a></p>
         </div>
     </footer>
 

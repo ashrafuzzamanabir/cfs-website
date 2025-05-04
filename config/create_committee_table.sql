@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS committee_members (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    post VARCHAR(100) NOT NULL,
+    year INT NOT NULL,
+    image_path VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+); 
