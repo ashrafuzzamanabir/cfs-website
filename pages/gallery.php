@@ -57,6 +57,7 @@ require_once '../config/db_config.php';
 <body>
     <nav class="navbar">
         <div class="logo">
+            <img src="../assets/images/cfs.jpg" alt="CFS Logo" class="logo-img">
             <h1>Chokh Film Society</h1>
         </div>
         <ul class="nav-links">

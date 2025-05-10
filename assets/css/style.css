@@ -45,12 +45,18 @@ body {
 .navbar .logo {
     display: flex;
     align-items: center;
+    gap: 1rem;
 }
 
-.navbar .logo h1 {
-    color: var(--secondary-color);
-    font-size: clamp(1.2rem, 2vw, 1.5rem);
+.logo-img {
+    height: 40px;
+    width: auto;
+}
+
+.logo h1 {
     margin: 0;
+    font-size: 1.5rem;
+    color: var(--secondary-color);
 }
 
 .nav-links {

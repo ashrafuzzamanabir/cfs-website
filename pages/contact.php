@@ -58,6 +58,7 @@ $contact_info = mysqli_fetch_assoc($result);
 <body>
     <nav class="navbar">
         <div class="logo">
+            <img src="../assets/images/cfs.jpg" alt="CFS Logo" class="logo-img">
             <h1>Chokh Film Society</h1>
         </div>
         <ul class="nav-links">

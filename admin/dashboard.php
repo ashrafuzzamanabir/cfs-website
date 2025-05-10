@@ -340,6 +340,7 @@ if(isset($_POST['update_about'])) {
 <body>
     <nav class="navbar">
         <div class="logo">
+            <img src="../assets/images/cfs.jpg" alt="CFS Logo" class="logo-img">
             <h1>Admin Dashboard</h1>
         </div>
         <ul class="nav-links">
