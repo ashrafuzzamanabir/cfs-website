@@ -120,20 +120,30 @@ require_once __DIR__ . '/../config/db_config.php';
         <div class="committee-container">
             <!-- Advisor Section -->
             <div class="advisor-section">
-                <div class="advisor-grid">
-                    <div class="advisor-image">
-                        <img src="../assets/uploads/committee/68153a1c5bce3.jpg" alt="Advisor" onerror="this.src='https://via.placeholder.com/200x200?text=Advisor'">
-                    </div>
-                    <div class="advisor-info">
-                        <h2>Message from Our Advisor</h2>
-                        <h3>Dr. Md. Shahidul Islam</h3>
-                        <p>Professor, Department of Computer Science and Engineering</p>
-                        <div class="advisor-message">
-                            <p>"It gives me immense pleasure to see the Chokh Film Society growing and thriving at SUST. As the advisor, I have witnessed the dedication and passion of our members in promoting film culture and artistic expression. The society has become a platform for students to explore their creativity, develop their skills, and contribute to the cultural landscape of our university.</p>
-                            <p>Through various events, screenings, and workshops, Chokh Film Society has successfully created a space for meaningful discussions about cinema and its impact on society. I am proud of the achievements of our members and look forward to seeing more innovative initiatives in the future."</p>
-                        </div>
-                    </div>
-                </div>
+                <?php
+                $sql = "SELECT * FROM advisors ORDER BY created_at DESC";
+                $result = mysqli_query($conn, $sql);
+                
+                while($row = mysqli_fetch_assoc($result)) {
+                    echo '<div class="advisor-grid">';
+                    echo '<div class="advisor-image">';
+                    if($row['image_path']) {
+                        echo '<img src="../' . htmlspecialchars($row['image_path']) . '" alt="' . htmlspecialchars($row['name']) . '">';
+                    } else {
+                        echo '<img src="../assets/images/default-avatar.png" alt="' . htmlspecialchars($row['name']) . '">';
+                    }
+                    echo '</div>';
+                    echo '<div class="advisor-info">';
+                    echo '<h2>Message from Our Advisor</h2>';
+                    echo '<h3>' . htmlspecialchars($row['name']) . '</h3>';
+                    echo '<p>' . htmlspecialchars($row['designation']) . '</p>';
+                    echo '<div class="advisor-message">';
+                    echo '<p>' . nl2br(htmlspecialchars($row['message'])) . '</p>';
+                    echo '</div>';
+                    echo '</div>';
+                    echo '</div>';
+                }
+                ?>
             </div>
 
             <h1>Committee Members</h1>

@@ -85,6 +85,86 @@ if(isset($_POST['delete_committee'])) {
     mysqli_stmt_bind_param($stmt, "i", $id);
     mysqli_stmt_execute($stmt);
 }
+
+// Handle advisor addition
+if(isset($_POST['add_advisor'])) {
+    $name = mysqli_real_escape_string($conn, $_POST['name']);
+    $designation = mysqli_real_escape_string($conn, $_POST['designation']);
+    $message = mysqli_real_escape_string($conn, $_POST['message']);
+    
+    // Handle image upload
+    $image_path = null;
+    if(isset($_FILES['advisor_image']) && $_FILES['advisor_image']['error'] == 0) {
+        $target_dir = "../assets/uploads/advisors/";
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+        
+        $imageFileType = strtolower(pathinfo($_FILES["advisor_image"]["name"], PATHINFO_EXTENSION));
+        $new_filename = uniqid() . '.' . $imageFileType;
+        $target_file = $target_dir . $new_filename;
+        
+        if(getimagesize($_FILES["advisor_image"]["tmp_name"]) !== false) {
+            if (move_uploaded_file($_FILES["advisor_image"]["tmp_name"], $target_file)) {
+                $image_path = "assets/uploads/advisors/" . $new_filename;
+            }
+        }
+    }
+    
+    $sql = "INSERT INTO advisors (name, designation, image_path, message) VALUES (?, ?, ?, ?)";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "ssss", $name, $designation, $image_path, $message);
+    mysqli_stmt_execute($stmt);
+}
+
+// Handle advisor deletion
+if(isset($_POST['delete_advisor'])) {
+    $id = $_POST['advisor_id'];
+    $sql = "DELETE FROM advisors WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+}
+
+// Handle sponsor addition
+if(isset($_POST['add_sponsor'])) {
+    $name = mysqli_real_escape_string($conn, $_POST['sponsor_name']);
+    $website_url = mysqli_real_escape_string($conn, $_POST['website_url']);
+    $description = mysqli_real_escape_string($conn, $_POST['sponsor_description']);
+    
+    // Handle logo upload
+    $logo_path = null;
+    if(isset($_FILES['sponsor_logo']) && $_FILES['sponsor_logo']['error'] == 0) {
+        $target_dir = "../assets/uploads/sponsors/";
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+        
+        $imageFileType = strtolower(pathinfo($_FILES["sponsor_logo"]["name"], PATHINFO_EXTENSION));
+        $new_filename = uniqid() . '.' . $imageFileType;
+        $target_file = $target_dir . $new_filename;
+        
+        if(getimagesize($_FILES["sponsor_logo"]["tmp_name"]) !== false) {
+            if (move_uploaded_file($_FILES["sponsor_logo"]["tmp_name"], $target_file)) {
+                $logo_path = "assets/uploads/sponsors/" . $new_filename;
+            }
+        }
+    }
+    
+    $sql = "INSERT INTO sponsors (name, logo_path, website_url, description) VALUES (?, ?, ?, ?)";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "ssss", $name, $logo_path, $website_url, $description);
+    mysqli_stmt_execute($stmt);
+}
+
+// Handle sponsor deletion
+if(isset($_POST['delete_sponsor'])) {
+    $id = $_POST['sponsor_id'];
+    $sql = "DELETE FROM sponsors WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -270,6 +350,99 @@ if(isset($_POST['delete_committee'])) {
                 echo "</div>";
             }
             ?>
+        </div>
+
+        <div class="admin-section">
+            <h2>Manage Advisors</h2>
+            <form method="POST" action="" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="name">Advisor Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="designation">Designation</label>
+                    <input type="text" id="designation" name="designation" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="advisor_image">Advisor Photo</label>
+                    <input type="file" id="advisor_image" name="advisor_image" accept="image/*" required>
+                </div>
+                <button type="submit" name="add_advisor" class="btn">Add Advisor</button>
+            </form>
+
+            <h3>Current Advisors</h3>
+            <?php
+            $sql = "SELECT * FROM advisors ORDER BY created_at DESC";
+            $result = mysqli_query($conn, $sql);
+            
+            while($row = mysqli_fetch_assoc($result)) {
+                echo "<div class='committee-member'>";
+                if($row['image_path']) {
+                    echo "<img src='../" . htmlspecialchars($row['image_path']) . "' alt='" . htmlspecialchars($row['name']) . "' style='width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-right: 1rem;'>";
+                }
+                echo "<div style='flex-grow: 1;'>";
+                echo "<p><strong>" . htmlspecialchars($row['name']) . "</strong> - " . htmlspecialchars($row['designation']) . "</p>";
+                echo "<p><em>" . htmlspecialchars($row['message']) . "</em></p>";
+                echo "</div>";
+                echo "<form method='POST' action='' style='display:inline;'>";
+                echo "<input type='hidden' name='advisor_id' value='" . $row['id'] . "'>";
+                echo "<button type='submit' name='delete_advisor' class='btn btn-danger'>Delete</button>";
+                echo "</form>";
+                echo "</div>";
+            }
+            ?>
+        </div>
+
+        <div class="admin-section">
+            <h2>Manage Sponsors</h2>
+            <form method="POST" action="" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="sponsor_name">Sponsor Name</label>
+                    <input type="text" id="sponsor_name" name="sponsor_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="website_url">Website URL</label>
+                    <input type="url" id="website_url" name="website_url" required>
+                </div>
+                <div class="form-group">
+                    <label for="sponsor_description">Description</label>
+                    <textarea id="sponsor_description" name="sponsor_description" rows="2" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="sponsor_logo">Sponsor Logo</label>
+                    <input type="file" id="sponsor_logo" name="sponsor_logo" accept="image/*" required>
+                </div>
+                <button type="submit" name="add_sponsor" class="btn">Add Sponsor</button>
+            </form>
+
+            <h3>Current Sponsors</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+            <?php
+            $sql = "SELECT * FROM sponsors ORDER BY created_at DESC";
+            $result = mysqli_query($conn, $sql);
+            
+            while($row = mysqli_fetch_assoc($result)) {
+                echo "<div style='background: white; padding: 1rem; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex: 1 1 300px;'>";
+                if($row['logo_path']) {
+                    echo "<img src='../" . htmlspecialchars($row['logo_path']) . "' alt='" . htmlspecialchars($row['name']) . "' style='max-width: 150px; max-height: 100px; object-fit: contain; margin-bottom: 0.5rem;'>";
+                }
+                echo "<h4>" . htmlspecialchars($row['name']) . "</h4>";
+                echo "<p>" . htmlspecialchars($row['description']) . "</p>";
+                if($row['website_url']) {
+                    echo "<a href='" . htmlspecialchars($row['website_url']) . "' target='_blank' style='color: var(--accent-color);'>Visit Website</a>";
+                }
+                echo "<form method='POST' action='' style='margin-top: 0.5rem;'>";
+                echo "<input type='hidden' name='sponsor_id' value='" . $row['id'] . "'>";
+                echo "<button type='submit' name='delete_sponsor' class='btn btn-danger'>Delete</button>";
+                echo "</form>";
+                echo "</div>";
+            }
+            ?>
+            </div>
         </div>
     </div>
 </body>

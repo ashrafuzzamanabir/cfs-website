@@ -75,6 +75,32 @@ session_start();
         </div>
     </section>
 
+    <!-- Sponsors Section -->
+    <section class="sponsors">
+        <div class="container">
+            <h2>Our Sponsors</h2>
+            <div class="sponsors-grid">
+                <?php
+                $sql = "SELECT * FROM sponsors ORDER BY created_at DESC";
+                $result = mysqli_query($conn, $sql);
+                
+                while($row = mysqli_fetch_assoc($result)) {
+                    echo '<div class="sponsor-card">';
+                    if($row['logo_path']) {
+                        echo '<img src="' . htmlspecialchars($row['logo_path']) . '" alt="' . htmlspecialchars($row['name']) . '">';
+                    }
+                    echo '<h3>' . htmlspecialchars($row['name']) . '</h3>';
+                    echo '<p>' . htmlspecialchars($row['description']) . '</p>';
+                    if($row['website_url']) {
+                        echo '<a href="' . htmlspecialchars($row['website_url']) . '" target="_blank" class="sponsor-link">Visit Website</a>';
+                    }
+                    echo '</div>';
+                }
+                ?>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer>
         <div class="container">
