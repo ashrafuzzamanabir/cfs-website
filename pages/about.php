@@ -1,5 +1,10 @@
 <?php
 require_once '../config/db_config.php';
+
+// Get about page content
+$sql = "SELECT * FROM about_page WHERE id = 1";
+$result = mysqli_query($conn, $sql);
+$about_content = mysqli_fetch_assoc($result);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,6 +37,12 @@ require_once '../config/db_config.php';
         .about-text {
             line-height: 1.8;
             margin-bottom: 2rem;
+        }
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
         .social-link {
             display: inline-block;
@@ -72,33 +83,32 @@ require_once '../config/db_config.php';
             </div>
             
             <div class="about-text">
-                <p>Chokh Film Society is a vibrant cultural organization at Shahjalal University of Science and Technology (SUST), dedicated to promoting film culture and cinematic arts among students. Founded in 2010, we have been consistently working to create a platform for film enthusiasts to explore, discuss, and appreciate the art of cinema.</p>
-                
-                <p>Our activities include:</p>
-                <ul>
-                    <li>Regular film screenings and discussions</li>
-                    <li>Film festivals and competitions</li>
-                    <li>Workshops on filmmaking and cinematography</li>
-                    <li>Cultural events and exhibitions</li>
-                    <li>Collaboration with other film societies</li>
-                </ul>
-                
-                <p>We believe in the power of cinema to inspire, educate, and bring people together. Our society provides a platform for students to showcase their creativity and develop their skills in filmmaking while fostering a community of film enthusiasts.</p>
+                <?php echo nl2br(htmlspecialchars($about_content['about_text'] ?? '')); ?>
             </div>
             
-            <div style="text-align: center;">
-                <a href="https://www.facebook.com/cfssust" target="_blank" class="social-link">
-                    <i class="fab fa-facebook"></i>
-                    Follow Us on Facebook
-                </a>
+            <div class="social-links">
+                <?php if (!empty($about_content['facebook_link'])): ?>
+                    <a href="<?php echo htmlspecialchars($about_content['facebook_link']); ?>" target="_blank" class="social-link">
+                        <i class="fab fa-facebook"></i> Facebook
+                    </a>
+                <?php endif; ?>
+                <?php if (!empty($about_content['instagram_link'])): ?>
+                    <a href="<?php echo htmlspecialchars($about_content['instagram_link']); ?>" target="_blank" class="social-link">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </a>
+                <?php endif; ?>
+                <?php if (!empty($about_content['email_address'])): ?>
+                    <a href="mailto:<?php echo htmlspecialchars($about_content['email_address']); ?>" class="social-link">
+                        <i class="fas fa-envelope"></i> Email Us
+                    </a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
 
     <footer>
         <div class="container">
-        <p>&copy; <?php echo date('Y'); ?> Chokh Film Society - SUST. All rights reserved. Built by <a href="https://www.facebook.com/Idealtech.dev" target="_blank">Ideal Tech Ltd.</a></p>
-
+            <p>&copy; <?php echo date('Y'); ?> Chokh Film Society - SUST. All rights reserved. Built by <a href="https://www.facebook.com/Idealtech.dev" target="_blank">Ideal Tech Ltd.</a></p>
         </div>
     </footer>
 

@@ -1,5 +1,10 @@
 <?php
 require_once '../config/db_config.php';
+
+// Get contact information
+$sql = "SELECT * FROM contact_info WHERE id = 1";
+$result = mysqli_query($conn, $sql);
+$contact_info = mysqli_fetch_assoc($result);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -73,28 +78,47 @@ require_once '../config/db_config.php';
                         <i class="fas fa-map-marker-alt"></i>
                         <div>
                             <h3>Location</h3>
-                            <p>Shahjalal University of Science and Technology<br>
-                            Sylhet 3114, Bangladesh</p>
+                            <p><?php echo nl2br(htmlspecialchars($contact_info['location'] ?? '')); ?></p>
                         </div>
                     </div>
                     <div class="contact-item">
                         <i class="fas fa-envelope"></i>
                         <div>
                             <h3>Email</h3>
-                            <p><a href="mailto:chokhfilmsociety@gmail.com">chokhfilmsociety@gmail.com</a></p>
+                            <p><a href="mailto:<?php echo htmlspecialchars($contact_info['email'] ?? ''); ?>"><?php echo htmlspecialchars($contact_info['email'] ?? ''); ?></a></p>
                         </div>
                     </div>
+                    <?php if (!empty($contact_info['phone'])): ?>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h3>Phone</h3>
+                            <p><a href="tel:<?php echo htmlspecialchars($contact_info['phone'] ?? ''); ?>"><?php echo htmlspecialchars($contact_info['phone'] ?? ''); ?></a></p>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (!empty($contact_info['facebook_link'])): ?>
                     <div class="contact-item">
                         <i class="fab fa-facebook"></i>
                         <div>
                             <h3>Facebook</h3>
-                            <p><a href="https://www.facebook.com/cfssust" target="_blank">facebook.com/cfssust</a></p>
+                            <p><a href="<?php echo htmlspecialchars($contact_info['facebook_link'] ?? ''); ?>" target="_blank">facebook.com/cfssust</a></p>
                         </div>
                     </div>
+                    <?php endif; ?>
+                    <?php if (!empty($contact_info['instagram_link'])): ?>
+                    <div class="contact-item">
+                        <i class="fab fa-instagram"></i>
+                        <div>
+                            <h3>Instagram</h3>
+                            <p><a href="<?php echo htmlspecialchars($contact_info['instagram_link'] ?? ''); ?>" target="_blank">instagram.com/chokhfilmsociety</a></p>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 </div>
                 <div class="map-container">
                     <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3618.8274566013213!2d91.83075931500685!3d24.91745498400939!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3750552bc91107d1%3A0x6e2a32d2bb0e5096!2sShahjalal%20University%20of%20Science%20and%20Technology!5e0!3m2!1sen!2sbd!4v1625147000000!5m2!1sen!2sbd"
+                        src="<?php echo htmlspecialchars($contact_info['map_embed_url'] ?? ''); ?>"
                         width="100%" 
                         height="100%" 
                         style="border:0;" 

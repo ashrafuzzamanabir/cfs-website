@@ -208,6 +208,24 @@ if(isset($_POST['delete_sponsor'])) {
     mysqli_stmt_bind_param($stmt, "i", $id);
     mysqli_stmt_execute($stmt);
 }
+
+// Handle about page content update
+if(isset($_POST['update_about'])) {
+    $about_text = mysqli_real_escape_string($conn, $_POST['about_text']);
+    $facebook_link = mysqli_real_escape_string($conn, $_POST['facebook_link']);
+    $instagram_link = mysqli_real_escape_string($conn, $_POST['instagram_link']);
+    $linkedin_link = mysqli_real_escape_string($conn, $_POST['linkedin_link']);
+    
+    $sql = "UPDATE about_page SET 
+            about_text = ?, 
+            facebook_link = ?, 
+            instagram_link = ?, 
+            linkedin_link = ? 
+            WHERE id = 1";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "ssss", $about_text, $facebook_link, $instagram_link, $linkedin_link);
+    mysqli_stmt_execute($stmt);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -342,6 +360,12 @@ if(isset($_POST['delete_sponsor'])) {
                 </a>
                 <a href="manage_sponsors.php" class="btn">
                     <i class="fas fa-handshake"></i> Manage Sponsors
+                </a>
+                <a href="manage_about.php" class="btn">
+                    <i class="fas fa-info-circle"></i> Manage About Page
+                </a>
+                <a href="manage_contact.php" class="btn">
+                    <i class="fas fa-address-book"></i> Manage Contact Info
                 </a>
             </div>
         </div>
