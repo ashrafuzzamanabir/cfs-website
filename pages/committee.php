@@ -107,12 +107,18 @@ require_once __DIR__ . '/../config/db_config.php';
         <div class="logo">
             <h1>Chokh Film Society</h1>
         </div>
+        <button class="mobile-menu-btn" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
         <ul class="nav-links">
             <li><a href="../index.php">Home</a></li>
             <li><a href="about.php">About</a></li>
             <li><a href="gallery.php">Gallery</a></li>
-            <li><a href="committee.php">Committee</a></li>
+            <li><a href="committee.php" class="active">Committee</a></li>
             <li><a href="contact.php">Contact</a></li>
+            <?php if(isset($_SESSION['admin_logged_in'])): ?>
+                <li><a href="../admin/dashboard.php">Admin</a></li>
+            <?php endif; ?>
         </ul>
     </nav>
 
@@ -184,5 +190,22 @@ require_once __DIR__ . '/../config/db_config.php';
             <p>&copy; <?php echo date('Y'); ?> Chokh Film Society - SUST. All rights reserved. Built by <a href="https://www.facebook.com/Idealtech.dev" target="_blank">Ideal Tech Ltd.</a></p>
         </div>
     </footer>
+
+    <script>
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navLinks = document.querySelector('.nav-links');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!navLinks.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
+                navLinks.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html> 

@@ -45,6 +45,49 @@ if(isset($_POST['create_event'])) {
     mysqli_stmt_execute($stmt);
 }
 
+// Handle event deletion
+if(isset($_POST['delete_event'])) {
+    $id = $_POST['event_id'];
+    $sql = "DELETE FROM events WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+}
+
+// Handle gallery image deletion
+if(isset($_POST['delete_image'])) {
+    $id = $_POST['image_id'];
+    $sql = "DELETE FROM gallery WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+}
+
+// Handle event update
+if(isset($_POST['update_event'])) {
+    $id = $_POST['event_id'];
+    $title = mysqli_real_escape_string($conn, $_POST['title']);
+    $description = mysqli_real_escape_string($conn, $_POST['description']);
+    $event_date = $_POST['event_date'];
+    
+    $sql = "UPDATE events SET title = ?, description = ?, event_date = ? WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "sssi", $title, $description, $event_date, $id);
+    mysqli_stmt_execute($stmt);
+}
+
+// Handle gallery image update
+if(isset($_POST['update_image'])) {
+    $id = $_POST['image_id'];
+    $caption = mysqli_real_escape_string($conn, $_POST['caption']);
+    $event_id = $_POST['event_id'];
+    
+    $sql = "UPDATE gallery SET caption = ?, event_id = ? WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "sii", $caption, $event_id, $id);
+    mysqli_stmt_execute($stmt);
+}
+
 // Handle committee member addition
 if(isset($_POST['add_committee'])) {
     $name = mysqli_real_escape_string($conn, $_POST['name']);
@@ -173,6 +216,7 @@ if(isset($_POST['delete_sponsor'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Chokh Film Society</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .dashboard {
             padding: 2rem;
@@ -205,36 +249,73 @@ if(isset($_POST['delete_sponsor'])) {
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn i {
+            margin-right: 0.5rem;
         }
         .btn-danger {
             background: #dc3545;
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
         }
-        .year-group {
-            margin-bottom: 2rem;
-            padding: 1rem;
+        .btn-warning {
+            background: #ffc107;
+            color: #000;
+        }
+        .quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .events-grid, .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .event-card, .gallery-card {
             background: #f8f9fa;
-            border-radius: 4px;
-        }
-        .year-group h4 {
-            margin-bottom: 1rem;
-            color: #333;
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 0.5rem;
-        }
-        .committee-member {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
-            background: white;
-            border-radius: 4px;
+            padding: 1rem;
+            border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        .committee-member p {
-            margin: 0;
+        .gallery-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 500px;
+            margin: 2rem auto;
+            position: relative;
+        }
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -250,6 +331,21 @@ if(isset($_POST['delete_sponsor'])) {
     </nav>
 
     <div class="dashboard">
+        <div class="admin-section">
+            <h2>Quick Links</h2>
+            <div class="quick-links-grid">
+                <a href="manage_committee.php" class="btn">
+                    <i class="fas fa-users"></i> Manage Committee
+                </a>
+                <a href="manage_advisors.php" class="btn">
+                    <i class="fas fa-user-tie"></i> Manage Advisors
+                </a>
+                <a href="manage_sponsors.php" class="btn">
+                    <i class="fas fa-handshake"></i> Manage Sponsors
+                </a>
+            </div>
+        </div>
+
         <div class="admin-section">
             <h2>Create New Event</h2>
             <form method="POST" action="">
@@ -267,6 +363,29 @@ if(isset($_POST['delete_sponsor'])) {
                 </div>
                 <button type="submit" name="create_event" class="btn">Create Event</button>
             </form>
+
+            <h3>Current Events</h3>
+            <div class="events-grid">
+                <?php
+                $sql = "SELECT * FROM events ORDER BY event_date DESC";
+                $result = mysqli_query($conn, $sql);
+                
+                while($row = mysqli_fetch_assoc($result)) {
+                    echo "<div class='event-card'>";
+                    echo "<h3>" . htmlspecialchars($row['title']) . "</h3>";
+                    echo "<p>" . htmlspecialchars($row['description']) . "</p>";
+                    echo "<p><strong>Date:</strong> " . date('F j, Y', strtotime($row['event_date'])) . "</p>";
+                    echo "<div class='card-actions'>";
+                    echo "<button onclick='editEvent(" . $row['id'] . ", \"" . htmlspecialchars($row['title']) . "\", \"" . htmlspecialchars($row['description']) . "\", \"" . $row['event_date'] . "\")' class='btn btn-warning'><i class='fas fa-edit'></i> Edit</button>";
+                    echo "<form method='POST' action='' style='display:inline;'>";
+                    echo "<input type='hidden' name='event_id' value='" . $row['id'] . "'>";
+                    echo "<button type='submit' name='delete_event' class='btn btn-danger' onclick='return confirm(\"Are you sure you want to delete this event?\")'><i class='fas fa-trash'></i> Delete</button>";
+                    echo "</form>";
+                    echo "</div>";
+                    echo "</div>";
+                }
+                ?>
+            </div>
         </div>
 
         <div class="admin-section">
@@ -294,156 +413,112 @@ if(isset($_POST['delete_sponsor'])) {
                 </div>
                 <button type="submit" name="upload" class="btn">Upload Image</button>
             </form>
-        </div>
 
-        <div class="admin-section">
-            <h2>Manage Committee Members</h2>
-            <form method="POST" action="" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="name">Member Name</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="post">Post</label>
-                    <input type="text" id="post" name="post" required>
-                </div>
-                <div class="form-group">
-                    <label for="year">Year</label>
-                    <input type="number" id="year" name="year" min="2000" max="2099" required>
-                </div>
-                <div class="form-group">
-                    <label for="member_image">Member Photo</label>
-                    <input type="file" id="member_image" name="member_image" accept="image/*">
-                </div>
-                <button type="submit" name="add_committee" class="btn">Add Committee Member</button>
-            </form>
-
-            <h3>Current Committee Members</h3>
-            <?php
-            $sql = "SELECT * FROM committee_members ORDER BY year DESC, post ASC";
-            $result = mysqli_query($conn, $sql);
-            
-            $current_year = null;
-            while($row = mysqli_fetch_assoc($result)) {
-                if($current_year !== $row['year']) {
-                    if($current_year !== null) {
-                        echo "</div>";
-                    }
-                    echo "<div class='year-group'>";
-                    echo "<h4>Year " . $row['year'] . "</h4>";
-                    $current_year = $row['year'];
+            <h3>Gallery Images</h3>
+            <div class="gallery-grid">
+                <?php
+                $sql = "SELECT g.*, e.title as event_title FROM gallery g 
+                        LEFT JOIN events e ON g.event_id = e.id 
+                        ORDER BY g.created_at DESC";
+                $result = mysqli_query($conn, $sql);
+                
+                while($row = mysqli_fetch_assoc($result)) {
+                    echo "<div class='gallery-card'>";
+                    echo "<img src='../" . htmlspecialchars($row['image_path']) . "' alt='" . htmlspecialchars($row['caption']) . "'>";
+                    echo "<p><strong>Caption:</strong> " . htmlspecialchars($row['caption']) . "</p>";
+                    echo "<p><strong>Event:</strong> " . htmlspecialchars($row['event_title']) . "</p>";
+                    echo "<div class='card-actions'>";
+                    echo "<button onclick='editImage(" . $row['id'] . ", \"" . htmlspecialchars($row['caption']) . "\", " . $row['event_id'] . ")' class='btn btn-warning'><i class='fas fa-edit'></i> Edit</button>";
+                    echo "<form method='POST' action='' style='display:inline;'>";
+                    echo "<input type='hidden' name='image_id' value='" . $row['id'] . "'>";
+                    echo "<button type='submit' name='delete_image' class='btn btn-danger' onclick='return confirm(\"Are you sure you want to delete this image?\")'><i class='fas fa-trash'></i> Delete</button>";
+                    echo "</form>";
+                    echo "</div>";
+                    echo "</div>";
                 }
-                echo "<div class='committee-member'>";
-                if($row['image_path']) {
-                    echo "<img src='../" . htmlspecialchars($row['image_path']) . "' alt='" . htmlspecialchars($row['name']) . "' style='width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-right: 1rem;'>";
-                }
-                echo "<div style='flex-grow: 1;'>";
-                echo "<p><strong>" . htmlspecialchars($row['name']) . "</strong> - " . htmlspecialchars($row['post']) . "</p>";
-                echo "</div>";
-                echo "<form method='POST' action='' style='display:inline;'>";
-                echo "<input type='hidden' name='member_id' value='" . $row['id'] . "'>";
-                echo "<button type='submit' name='delete_committee' class='btn btn-danger'>Delete</button>";
-                echo "</form>";
-                echo "</div>";
-            }
-            if($current_year !== null) {
-                echo "</div>";
-            }
-            ?>
-        </div>
-
-        <div class="admin-section">
-            <h2>Manage Advisors</h2>
-            <form method="POST" action="" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="name">Advisor Name</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="designation">Designation</label>
-                    <input type="text" id="designation" name="designation" required>
-                </div>
-                <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" rows="4" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="advisor_image">Advisor Photo</label>
-                    <input type="file" id="advisor_image" name="advisor_image" accept="image/*" required>
-                </div>
-                <button type="submit" name="add_advisor" class="btn">Add Advisor</button>
-            </form>
-
-            <h3>Current Advisors</h3>
-            <?php
-            $sql = "SELECT * FROM advisors ORDER BY created_at DESC";
-            $result = mysqli_query($conn, $sql);
-            
-            while($row = mysqli_fetch_assoc($result)) {
-                echo "<div class='committee-member'>";
-                if($row['image_path']) {
-                    echo "<img src='../" . htmlspecialchars($row['image_path']) . "' alt='" . htmlspecialchars($row['name']) . "' style='width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-right: 1rem;'>";
-                }
-                echo "<div style='flex-grow: 1;'>";
-                echo "<p><strong>" . htmlspecialchars($row['name']) . "</strong> - " . htmlspecialchars($row['designation']) . "</p>";
-                echo "<p><em>" . htmlspecialchars($row['message']) . "</em></p>";
-                echo "</div>";
-                echo "<form method='POST' action='' style='display:inline;'>";
-                echo "<input type='hidden' name='advisor_id' value='" . $row['id'] . "'>";
-                echo "<button type='submit' name='delete_advisor' class='btn btn-danger'>Delete</button>";
-                echo "</form>";
-                echo "</div>";
-            }
-            ?>
-        </div>
-
-        <div class="admin-section">
-            <h2>Manage Sponsors</h2>
-            <form method="POST" action="" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="sponsor_name">Sponsor Name</label>
-                    <input type="text" id="sponsor_name" name="sponsor_name" required>
-                </div>
-                <div class="form-group">
-                    <label for="website_url">Website URL</label>
-                    <input type="url" id="website_url" name="website_url" required>
-                </div>
-                <div class="form-group">
-                    <label for="sponsor_description">Description</label>
-                    <textarea id="sponsor_description" name="sponsor_description" rows="2" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="sponsor_logo">Sponsor Logo</label>
-                    <input type="file" id="sponsor_logo" name="sponsor_logo" accept="image/*" required>
-                </div>
-                <button type="submit" name="add_sponsor" class="btn">Add Sponsor</button>
-            </form>
-
-            <h3>Current Sponsors</h3>
-            <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-            <?php
-            $sql = "SELECT * FROM sponsors ORDER BY created_at DESC";
-            $result = mysqli_query($conn, $sql);
-            
-            while($row = mysqli_fetch_assoc($result)) {
-                echo "<div style='background: white; padding: 1rem; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); flex: 1 1 300px;'>";
-                if($row['logo_path']) {
-                    echo "<img src='../" . htmlspecialchars($row['logo_path']) . "' alt='" . htmlspecialchars($row['name']) . "' style='max-width: 150px; max-height: 100px; object-fit: contain; margin-bottom: 0.5rem;'>";
-                }
-                echo "<h4>" . htmlspecialchars($row['name']) . "</h4>";
-                echo "<p>" . htmlspecialchars($row['description']) . "</p>";
-                if($row['website_url']) {
-                    echo "<a href='" . htmlspecialchars($row['website_url']) . "' target='_blank' style='color: var(--accent-color);'>Visit Website</a>";
-                }
-                echo "<form method='POST' action='' style='margin-top: 0.5rem;'>";
-                echo "<input type='hidden' name='sponsor_id' value='" . $row['id'] . "'>";
-                echo "<button type='submit' name='delete_sponsor' class='btn btn-danger'>Delete</button>";
-                echo "</form>";
-                echo "</div>";
-            }
-            ?>
+                ?>
             </div>
         </div>
     </div>
+
+    <!-- Edit Event Modal -->
+    <div id="editEventModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editEventModal')">&times;</span>
+            <h2>Edit Event</h2>
+            <form method="POST" action="">
+                <input type="hidden" name="event_id" id="edit_event_id">
+                <div class="form-group">
+                    <label for="edit_title">Event Title</label>
+                    <input type="text" id="edit_title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_description">Description</label>
+                    <textarea id="edit_description" name="description" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit_event_date">Event Date</label>
+                    <input type="date" id="edit_event_date" name="event_date" required>
+                </div>
+                <button type="submit" name="update_event" class="btn">Update Event</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Image Modal -->
+    <div id="editImageModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editImageModal')">&times;</span>
+            <h2>Edit Image</h2>
+            <form method="POST" action="">
+                <input type="hidden" name="image_id" id="edit_image_id">
+                <div class="form-group">
+                    <label for="edit_caption">Caption</label>
+                    <input type="text" id="edit_caption" name="caption" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_image_event_id">Event</label>
+                    <select id="edit_image_event_id" name="event_id" required>
+                        <?php
+                        $sql = "SELECT id, title FROM events ORDER BY event_date DESC";
+                        $result = mysqli_query($conn, $sql);
+                        while($row = mysqli_fetch_assoc($result)) {
+                            echo "<option value='" . $row['id'] . "'>" . $row['title'] . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+                <button type="submit" name="update_image" class="btn">Update Image</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function editEvent(id, title, description, date) {
+            document.getElementById('edit_event_id').value = id;
+            document.getElementById('edit_title').value = title;
+            document.getElementById('edit_description').value = description;
+            document.getElementById('edit_event_date').value = date;
+            document.getElementById('editEventModal').style.display = 'block';
+        }
+
+        function editImage(id, caption, eventId) {
+            document.getElementById('edit_image_id').value = id;
+            document.getElementById('edit_caption').value = caption;
+            document.getElementById('edit_image_event_id').value = eventId;
+            document.getElementById('editImageModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html> 
