@@ -80,7 +80,7 @@ $about_content = mysqli_fetch_assoc($result);
         <div class="about-content">
             <div class="about-header">
                 <h2>About Chokh Film Society</h2>
-                <p>Promoting Film Culture at SUST</p>
+                <p>Promoting Film Culture at SUST Since 1996</p>
             </div>
             
             <div class="about-text">
