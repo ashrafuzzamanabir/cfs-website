@@ -30,15 +30,15 @@ CREATE TABLE IF NOT EXISTS gallery (
 );
 
 -- Create about_page table
-CREATE TABLE IF NOT EXISTS about_page (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    about_text TEXT NOT NULL,
-    facebook_link VARCHAR(255),
-    instagram_link VARCHAR(255),
-    email_address VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+-- CREATE TABLE IF NOT EXISTS about_page (
+--     id INT PRIMARY KEY AUTO_INCREMENT,
+--     about_text TEXT NOT NULL,
+--     facebook_link VARCHAR(255),
+--     instagram_link VARCHAR(255),
+--     email_address VARCHAR(255),
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+-- );
 
 -- Create committee_members table
 CREATE TABLE IF NOT EXISTS committee_members (
