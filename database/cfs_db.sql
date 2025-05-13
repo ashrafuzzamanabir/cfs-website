@@ -1,6 +1,6 @@
 -- Create database
-CREATE DATABASE IF NOT EXISTS cfs_db;
-USE cfs_db;
+CREATE DATABASE IF NOT EXISTS cfssustc_cfs;
+USE cfssustc_cfs;
 
 -- Create admin users table
 CREATE TABLE IF NOT EXISTS admin_users (
@@ -72,4 +72,4 @@ CREATE TABLE IF NOT EXISTS sponsors (
 
 -- Insert default admin user (password: admin123 - IN PLAIN TEXT NOW!)
 INSERT INTO admin_users (username, password) VALUES
-('admin', 'admin123');
+('admin', '12emu4321#@8');
