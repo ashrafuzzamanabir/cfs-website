@@ -335,6 +335,110 @@ if(isset($_POST['update_about'])) {
             font-size: 1.5rem;
             cursor: pointer;
         }
+        .navbar {
+            background-color: var(--primary-color);
+            padding: 0.5rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-inline: var(--content-padding);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+        }
+
+        .logo h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .nav-links li {
+            position: relative;
+        }
+
+        .nav-links li a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            display: block;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .nav-links li a:hover,
+        .nav-links li a.active {
+            color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .hamburger {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--primary-color);
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li a {
+                padding: 0.75rem 1rem;
+                width: 100%;
+                text-align: center;
+            }
+
+            .navbar {
+                padding: 0.5rem var(--content-padding);
+            }
+        }
     </style>
 </head>
 <body>
@@ -343,7 +447,11 @@ if(isset($_POST['update_about'])) {
             <img src="../assets/images/cfs.jpg" alt="CFS Logo" class="logo-img">
             <h1>Admin Dashboard</h1>
         </div>
+        <button class="hamburger" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
         <ul class="nav-links">
+            <li><a href="dashboard.php" class="active">Dashboard</a></li>
             <li><a href="../index.php">View Site</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
@@ -543,6 +651,11 @@ if(isset($_POST['update_about'])) {
             if (event.target.className === 'modal') {
                 event.target.style.display = 'none';
             }
+        }
+
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
         }
     </script>
 </body>
