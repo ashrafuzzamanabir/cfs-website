@@ -9,7 +9,7 @@ if(!isset($_SESSION['admin_logged_in'])) {
     exit();
 }
 
-// Handle file upload
+// Handle file upload test
 if(isset($_POST['upload'])) {
     $event_id = $_POST['event_id'];
     $caption = mysqli_real_escape_string($conn, $_POST['caption']);
