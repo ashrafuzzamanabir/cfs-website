@@ -1,29 +1,28 @@
 <?php
-require_once '../config/db_config.php';
+require_once __DIR__ . '/../config/config.html';
+require_once __DIR__ . '/../config/db_config.html';
 session_start();
 
 if(isset($_POST['login'])) {
     $username = mysqli_real_escape_string($conn, $_POST['username']);
     $password = $_POST['password'];
 
-    $sql = "SELECT * FROM admin_users WHERE username = ?";
+    $sql = "SELECT * FROM admin_users WHERE username = ? AND password = ?";
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "s", $username);
+    mysqli_stmt_bind_param($stmt, "ss", $username, $password);
     mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-
-    if($row = mysqli_fetch_assoc($result)) {
-        // Directly compare the entered password with the database password
-        if($password === $row['password']) {
-            $_SESSION['admin_logged_in'] = true;
-            $_SESSION['admin_username'] = $row['username'];
-            header("Location: dashboard.php");
-            exit();
-        } else {
-            $error = "Invalid password";
-        }
+    
+    // Bind the result variables
+    mysqli_stmt_bind_result($stmt, $id, $db_username, $db_password);
+    
+    // Check if we got a result
+    if(mysqli_stmt_fetch($stmt)) {
+        $_SESSION['admin_logged_in'] = true;
+        $_SESSION['admin_username'] = $db_username;
+        header("Location: dashboard.html");
+        exit();
     } else {
-        $error = "Invalid username";
+        $error = "Invalid username or password";
     }
 
     mysqli_stmt_close($stmt);
@@ -40,20 +39,19 @@ mysqli_close($conn);
     <link rel="stylesheet" href="../assets/css/style.css">
     <style>
         :root {
-            --accent-color: #007bff; /* Example accent color */
+            --accent-color: #007bff;
         }
         body {
             font-family: sans-serif;
             background-color: #f4f4f4;
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         .login-container {
             max-width: 400px;
-            margin: 2rem;
+            margin: 8rem auto 2rem;
             padding: 2rem;
             background: white;
             border-radius: 8px;
@@ -62,7 +60,7 @@ mysqli_close($conn);
         h2 {
             text-align: center;
             margin-bottom: 1.5rem;
-            color: var(--accent-color);
+            color: #000000;
         }
         .form-group {
             margin-bottom: 1rem;
@@ -71,6 +69,7 @@ mysqli_close($conn);
             display: block;
             margin-bottom: 0.5rem;
             font-weight: bold;
+            color: #000000;
         }
         .form-group input {
             width: 100%;
@@ -102,6 +101,7 @@ mysqli_close($conn);
             text-align: center;
             margin-top: 1rem;
             font-size: 0.9rem;
+            color: #000000;
         }
         p a {
             color: var(--accent-color);
@@ -113,6 +113,23 @@ mysqli_close($conn);
     </style>
 </head>
 <body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="/assets/images/cfs.jpg" alt="CFS Logo" class="logo-img">
+            <h1>Chokh Film Society</h1>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-links">
+            <li><a href="/index.html">Home</a></li>
+            <li><a href="/pages/about.html">About</a></li>
+            <li><a href="/pages/committee.html">Committee</a></li>
+            <li><a href="/pages/gallery.html">Gallery</a></li>
+            <li><a href="/pages/contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
     <div class="login-container">
         <h2>Admin Login</h2>
         <?php if(isset($error)): ?>
@@ -130,8 +147,10 @@ mysqli_close($conn);
             <button type="submit" name="login" class="btn-login">Login</button>
         </form>
         <p>
-            <a href="../index.php">Back to Home</a>
+            <a href="../index.html">Back to Home</a>
         </p>
     </div>
+
+    <script src="/assets/js/main.js"></script>
 </body>
 </html>

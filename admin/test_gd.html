@@ -1,0 +1,19 @@
+<?php
+// Check if GD is enabled
+if (extension_loaded('gd')) {
+    echo "GD is enabled. Version: " . gd_info()['GD Version'];
+} else {
+    echo "GD is NOT enabled. Please enable it in your PHP configuration.";
+}
+
+// Check upload directory permissions
+$upload_dir = "../uploads/";
+if (file_exists($upload_dir)) {
+    echo "\nUpload directory exists and is " . (is_writable($upload_dir) ? "writable" : "NOT writable");
+} else {
+    echo "\nUpload directory does not exist";
+}
+
+// Check PHP error log
+echo "\nPHP Error Log Location: " . ini_get('error_log');
+?> 

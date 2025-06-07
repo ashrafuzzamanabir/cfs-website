@@ -1,10 +1,10 @@
 <?php
-require_once '../config/db_config.php';
+require_once __DIR__ . '/../config/db_config.html';
 session_start();
 
 // Check if admin is logged in
 if(!isset($_SESSION['admin_logged_in'])) {
-    header("Location: login.php");
+    header("Location: login.html");
     exit();
 }
 
@@ -54,9 +54,12 @@ if(isset($_POST['delete_sponsor'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Sponsors - Admin Dashboard</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --accent-color: #007bff;
+        }
         .admin-container {
             padding: 2rem;
             margin-top: 60px;
@@ -74,6 +77,7 @@ if(isset($_POST['delete_sponsor'])) {
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
+            color: #000000;
         }
         .form-group input, .form-group textarea {
             width: 100%;
@@ -108,6 +112,7 @@ if(isset($_POST['delete_sponsor'])) {
             display: flex;
             flex-direction: column;
             align-items: center;
+            color: #000000;
         }
         .sponsor-card img {
             max-width: 200px;
@@ -129,108 +134,18 @@ if(isset($_POST['delete_sponsor'])) {
         .sponsor-website:hover {
             text-decoration: underline;
         }
-        .navbar {
-            background-color: var(--primary-color);
-            padding: 0.5rem 0;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-inline: var(--content-padding);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .logo-img {
-            height: 40px;
-            width: auto;
-        }
-
-        .logo h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            color: var(--secondary-color);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 0.5rem;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }
-
-        .nav-links li {
-            position: relative;
-        }
-
-        .nav-links li a {
-            color: var(--secondary-color);
-            text-decoration: none;
-            padding: 0.75rem 1rem;
-            transition: all 0.3s ease;
-            border-radius: 4px;
-            display: block;
-            font-size: 0.95rem;
-            white-space: nowrap;
-        }
-
-        .nav-links li a:hover,
-        .nav-links li a.active {
-            color: var(--accent-color);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .hamburger {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--secondary-color);
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-
-        @media (max-width: 1024px) {
-            .hamburger {
-                display: block;
+        /* Adjust grid and card size for mobile views */
+        @media (max-width: 768px) {
+            .sponsors-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Smaller min width */
+                gap: 1rem; /* Slightly reduce gap */
             }
-
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: var(--primary-color);
-                padding: 1rem;
-                flex-direction: column;
-                gap: 0.5rem;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            .sponsor-card {
+                padding: 1rem; /* Reduce padding */
             }
-
-            .nav-links.active {
-                display: flex;
-            }
-
-            .nav-links li a {
-                padding: 0.75rem 1rem;
-                width: 100%;
-                text-align: center;
-            }
-
-            .navbar {
-                padding: 0.5rem var(--content-padding);
+            .sponsor-card img {
+                max-width: 150px; /* Reduce max width for mobile */
+                max-height: 80px; /* Reduce max height for mobile */
             }
         }
     </style>
@@ -238,17 +153,21 @@ if(isset($_POST['delete_sponsor'])) {
 <body>
     <nav class="navbar">
         <div class="logo">
-            <img src="../assets/images/cfs.jpg" alt="CFS Logo" class="logo-img">
-            <h1>Manage Sponsors</h1>
+            <img src="/assets/images/cfs.jpg" alt="CFS Logo" class="logo-img">
+            <h1>Chokh Film Society</h1>
         </div>
-        <button class="hamburger" onclick="toggleMenu()">
+        <button class="mobile-menu-btn" onclick="toggleMenu()">
             <i class="fas fa-bars"></i>
         </button>
         <ul class="nav-links">
-            <li><a href="dashboard.php">Dashboard</a></li>
-            <li><a href="manage_sponsors.php" class="active">Sponsors</a></li>
-            <li><a href="../index.php">View Site</a></li>
-            <li><a href="logout.php">Logout</a></li>
+            <li><a href="/admin/dashboard.html">Dashboard</a></li>
+            <li><a href="/admin/manage_about.html">About</a></li>
+            <li><a href="/admin/manage_committee.html">Committee</a></li>
+            <li><a href="/admin/manage_advisors.html">Advisors</a></li>
+            <li><a href="/admin/manage_sponsors.html" class="active">Sponsors</a></li>
+            <li><a href="/admin/manage_contact.html">Contact</a></li>
+            <li><a href="/index.html">View Site</a></li>
+            <li><a href="/admin/logout.html" class="logout-btn">Logout</a></li>
         </ul>
     </nav>
 
@@ -305,11 +224,7 @@ if(isset($_POST['delete_sponsor'])) {
             </div>
         </div>
     </div>
-    <script>
-        function toggleMenu() {
-            const navLinks = document.querySelector('.nav-links');
-            navLinks.classList.toggle('active');
-        }
-    </script>
+    <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/image-upload.js"></script>
 </body>
 </html> 

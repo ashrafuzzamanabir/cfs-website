@@ -1,0 +1,112 @@
+<?php
+function compressImage($source, $destination, $quality) {
+    try {
+        // Get image info
+        $info = getimagesize($source);
+        if (!$info) {
+            error_log("Failed to get image info for: " . $source);
+            return false;
+        }
+        
+        // Create image resource based on mime type
+        switch ($info['mime']) {
+            case 'image/jpeg':
+                $image = imagecreatefromjpeg($source);
+                break;
+            case 'image/png':
+                $image = imagecreatefrompng($source);
+                break;
+            case 'image/gif':
+                $image = imagecreatefromgif($source);
+                break;
+            default:
+                error_log("Unsupported image type: " . $info['mime']);
+                return false;
+        }
+        
+        if (!$image) {
+            error_log("Failed to create image resource from: " . $source);
+            return false;
+        }
+        
+        // Save image with compression
+        $success = false;
+        switch ($info['mime']) {
+            case 'image/jpeg':
+                $success = imagejpeg($image, $destination, $quality);
+                break;
+            case 'image/png':
+                // PNG compression is 0-9, so we need to convert our 0-100 scale
+                $pngQuality = round(9 - ($quality * 9 / 100));
+                $success = imagepng($image, $destination, $pngQuality);
+                break;
+            case 'image/gif':
+                $success = imagegif($image, $destination);
+                break;
+        }
+        
+        // Free up memory
+        imagedestroy($image);
+        
+        if (!$success) {
+            error_log("Failed to save compressed image to: " . $destination);
+            return false;
+        }
+        
+        return true;
+    } catch (Exception $e) {
+        error_log("Error in compressImage: " . $e->getMessage());
+        return false;
+    }
+}
+
+function handleImageUpload($file, $target_dir, $max_size = 307200) { // 300KB in bytes
+    try {
+        // Ensure target directory exists
+        if (!file_exists($target_dir)) {
+            if (!mkdir($target_dir, 0777, true)) {
+                error_log("Failed to create directory: " . $target_dir);
+                return false;
+            }
+        }
+        
+        // Generate unique filename
+        $file_extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $new_filename = uniqid() . '.' . $file_extension;
+        $target_file = $target_dir . $new_filename;
+        
+        if ($file['size'] > $max_size) {
+            // Create temporary file for compression
+            $temp_file = $target_dir . 'temp_' . $new_filename;
+            if (!move_uploaded_file($file['tmp_name'], $temp_file)) {
+                error_log("Failed to move uploaded file to temp location: " . $temp_file);
+                return false;
+            }
+            
+            // Compress the image
+            $quality = 75; // Adjust quality as needed (0-100)
+            
+            if (compressImage($temp_file, $target_file, $quality)) {
+                // Delete temporary file
+                unlink($temp_file);
+                return $target_file;
+            } else {
+                error_log("Compression failed, using original file");
+                // If compression fails, use original file
+                rename($temp_file, $target_file);
+                return $target_file;
+            }
+        } else {
+            // If file is already small enough, just move it
+            if (!move_uploaded_file($file['tmp_name'], $target_file)) {
+                error_log("Failed to move uploaded file: " . $target_file);
+                return false;
+            }
+            return $target_file;
+        }
+    } catch (Exception $e) {
+        error_log("Error in handleImageUpload: " . $e->getMessage());
+        return false;
+    }
+}
+?> 

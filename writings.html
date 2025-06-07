@@ -1,0 +1,181 @@
+<?php
+require_once __DIR__ . '/config/db_config.html';
+
+// Get category filter from URL
+$category = isset($_GET['category']) ? $_GET['category'] : null;
+
+// Build SQL query
+$sql = "SELECT * FROM writings";
+if ($category) {
+    $sql .= " WHERE category = '" . mysqli_real_escape_string($conn, $category) . "'";
+}
+$sql .= " ORDER BY created_at DESC";
+
+$result = mysqli_query($conn, $sql);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writings - Chokh Film Society</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .writings-container {
+            padding: 2rem;
+            margin-top: 60px;
+        }
+        .writings-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .category-filter {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .category-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--accent-color);
+            border-radius: 4px;
+            background: transparent;
+            color: var(--accent-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .category-btn.active {
+            background: var(--accent-color);
+            color: white;
+        }
+        .writings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .writing-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .writing-card:hover {
+            transform: translateY(-5px);
+        }
+        .writing-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .writing-content {
+            padding: 1.5rem;
+        }
+        .writing-category {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .writing-title {
+            margin: 0.5rem 0;
+            color: #333;
+        }
+        .writing-excerpt {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .read-more {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+        .read-more:hover {
+            background: #0056b3;
+        }
+        .no-writings {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+        @media (max-width: 768px) {
+            .writings-grid {
+                grid-template-columns: 1fr;
+            }
+            .category-filter {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="/assets/images/cfs.jpg" alt="CFS Logo" class="logo-img">
+            <h1>Chokh Film Society</h1>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-links">
+            <li><a href="/index.html">Home</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/committee.html">Committee</a></li>
+            <li><a href="/advisors.html">Advisors</a></li>
+            <li><a href="/sponsors.html">Sponsors</a></li>
+            <li><a href="/writings.html" class="active">Writings</a></li>
+            <li><a href="/contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="writings-container">
+        <div class="writings-header">
+            <h1>Our Writings</h1>
+            <p>Explore our collection of stories, portals, and writings</p>
+        </div>
+
+        <div class="category-filter">
+            <a href="writings.html" class="category-btn <?php echo !$category ? 'active' : ''; ?>">All</a>
+            <a href="writings.html?category=story" class="category-btn <?php echo $category === 'story' ? 'active' : ''; ?>">Stories</a>
+            <a href="writings.html?category=portal" class="category-btn <?php echo $category === 'portal' ? 'active' : ''; ?>">Portals</a>
+            <a href="writings.html?category=writing" class="category-btn <?php echo $category === 'writing' ? 'active' : ''; ?>">Writings</a>
+        </div>
+
+        <div class="writings-grid">
+            <?php
+            if ($result && mysqli_num_rows($result) > 0) {
+                while($row = mysqli_fetch_assoc($result)) {
+                    echo "<div class='writing-card'>";
+                    if($row['image_path']) {
+                        echo "<img src='" . htmlspecialchars($row['image_path']) . "' alt='" . htmlspecialchars($row['title']) . "' class='writing-image'>";
+                    }
+                    echo "<div class='writing-content'>";
+                    echo "<span class='writing-category'>" . ucfirst(htmlspecialchars($row['category'])) . "</span>";
+                    echo "<h2 class='writing-title'>" . htmlspecialchars($row['title']) . "</h2>";
+                    echo "<div class='writing-excerpt'>" . nl2br(htmlspecialchars(substr($row['content'], 0, 200))) . "...</div>";
+                    echo "<a href='writing.html?id=" . $row['id'] . "' class='read-more'>Read More</a>";
+                    echo "</div>";
+                    echo "</div>";
+                }
+            } else {
+                echo "<div class='no-writings'>";
+                echo "<h2>No writings found</h2>";
+                echo "<p>Check back later for new content!</p>";
+                echo "</div>";
+            }
+            ?>
+        </div>
+    </div>
+
+    <script src="/assets/js/main.js"></script>
+</body>
+</html> 

@@ -1,0 +1,324 @@
+<?php
+require_once __DIR__ . '/../config/db_config.html';
+session_start();
+
+// Check if admin is logged in
+if(!isset($_SESSION['admin_logged_in'])) {
+    header("Location: login.html");
+    exit();
+}
+
+// Handle writing addition
+if(isset($_POST['add_writing'])) {
+    $title = mysqli_real_escape_string($conn, $_POST['title']);
+    $content = mysqli_real_escape_string($conn, $_POST['content']);
+    $category = mysqli_real_escape_string($conn, $_POST['category']);
+    
+    // Handle image upload
+    $image_path = null;
+    if(isset($_FILES['writing_image']) && $_FILES['writing_image']['error'] == 0) {
+        $target_dir = "../assets/uploads/writings/";
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+        
+        $imageFileType = strtolower(pathinfo($_FILES["writing_image"]["name"], PATHINFO_EXTENSION));
+        $new_filename = uniqid() . '.' . $imageFileType;
+        $target_file = $target_dir . $new_filename;
+        
+        if(getimagesize($_FILES["writing_image"]["tmp_name"]) !== false) {
+            if (move_uploaded_file($_FILES["writing_image"]["tmp_name"], $target_file)) {
+                $image_path = "assets/uploads/writings/" . $new_filename;
+            }
+        }
+    }
+    
+    $sql = "INSERT INTO writings (title, content, category, image_path) VALUES (?, ?, ?, ?)";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "ssss", $title, $content, $category, $image_path);
+    mysqli_stmt_execute($stmt);
+}
+
+// Handle writing deletion
+if(isset($_POST['delete_writing'])) {
+    $id = $_POST['writing_id'];
+    $sql = "DELETE FROM writings WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+}
+
+// Handle writing update
+if(isset($_POST['update_writing'])) {
+    $id = $_POST['writing_id'];
+    $title = mysqli_real_escape_string($conn, $_POST['title']);
+    $content = mysqli_real_escape_string($conn, $_POST['content']);
+    $category = mysqli_real_escape_string($conn, $_POST['category']);
+    
+    $sql = "UPDATE writings SET title = ?, content = ?, category = ? WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "sssi", $title, $content, $category, $id);
+    mysqli_stmt_execute($stmt);
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Writings - Admin Dashboard</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --accent-color: #007bff;
+        }
+        .admin-container {
+            padding: 2rem;
+            margin-top: 60px;
+        }
+        .admin-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #000000;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-danger {
+            background: #dc3545;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        .writings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .writing-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .writing-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .writing-card h3 {
+            margin: 0.5rem 0;
+            color: #333;
+        }
+        .writing-category {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .writing-content {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 800px;
+            margin: 2rem auto;
+            position: relative;
+        }
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .writings-grid {
+                grid-template-columns: 1fr;
+            }
+            .writing-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="/assets/images/cfs.jpg" alt="CFS Logo" class="logo-img">
+            <h1>Chokh Film Society</h1>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-links">
+            <li><a href="/admin/dashboard.html">Dashboard</a></li>
+            <li><a href="/admin/manage_about.html">About</a></li>
+            <li><a href="/admin/manage_committee.html">Committee</a></li>
+            <li><a href="/admin/manage_advisors.html">Advisors</a></li>
+            <li><a href="/admin/manage_sponsors.html">Sponsors</a></li>
+            <li><a href="/admin/manage_writings.html" class="active">Writings</a></li>
+            <li><a href="/admin/manage_contact.html">Contact</a></li>
+            <li><a href="/index.html">View Site</a></li>
+            <li><a href="/admin/logout.html" class="logout-btn">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-section">
+            <h2>Add New Writing</h2>
+            <form method="POST" action="" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category" required>
+                        <option value="story">Story</option>
+                        <option value="portal">Portal</option>
+                        <option value="writing">Writing</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea id="content" name="content" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="writing_image">Featured Image</label>
+                    <input type="file" id="writing_image" name="writing_image" accept="image/*">
+                </div>
+                <button type="submit" name="add_writing" class="btn">Add Writing</button>
+            </form>
+        </div>
+
+        <div class="admin-section">
+            <h2>Current Writings</h2>
+            <div class="writings-grid">
+                <?php
+                $sql = "SELECT * FROM writings ORDER BY created_at DESC";
+                $result = mysqli_query($conn, $sql);
+                
+                while($row = mysqli_fetch_assoc($result)) {
+                    echo "<div class='writing-card'>";
+                    if($row['image_path']) {
+                        echo "<img src='../" . htmlspecialchars($row['image_path']) . "' alt='" . htmlspecialchars($row['title']) . "'>";
+                    }
+                    echo "<span class='writing-category'>" . ucfirst(htmlspecialchars($row['category'])) . "</span>";
+                    echo "<h3>" . htmlspecialchars($row['title']) . "</h3>";
+                    echo "<div class='writing-content'>" . nl2br(htmlspecialchars(substr($row['content'], 0, 200))) . "...</div>";
+                    echo "<div class='card-actions'>";
+                    echo "<button onclick='editWriting(" . $row['id'] . ", \"" . htmlspecialchars($row['title']) . "\", \"" . htmlspecialchars($row['content']) . "\", \"" . htmlspecialchars($row['category']) . "\")' class='btn btn-warning'><i class='fas fa-edit'></i> Edit</button>";
+                    echo "<form method='POST' action='' style='display:inline;'>";
+                    echo "<input type='hidden' name='writing_id' value='" . $row['id'] . "'>";
+                    echo "<button type='submit' name='delete_writing' class='btn btn-danger' onclick='return confirm(\"Are you sure you want to delete this writing?\")'><i class='fas fa-trash'></i> Delete</button>";
+                    echo "</form>";
+                    echo "</div>";
+                    echo "</div>";
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Writing Modal -->
+    <div id="editWritingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editWritingModal')">&times;</span>
+            <h2>Edit Writing</h2>
+            <form method="POST" action="">
+                <input type="hidden" name="writing_id" id="edit_writing_id">
+                <div class="form-group">
+                    <label for="edit_title">Title</label>
+                    <input type="text" id="edit_title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_category">Category</label>
+                    <select id="edit_category" name="category" required>
+                        <option value="story">Story</option>
+                        <option value="portal">Portal</option>
+                        <option value="writing">Writing</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit_content">Content</label>
+                    <textarea id="edit_content" name="content" required></textarea>
+                </div>
+                <button type="submit" name="update_writing" class="btn">Update Writing</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/image-upload.js"></script>
+    <script>
+        function editWriting(id, title, content, category) {
+            document.getElementById('edit_writing_id').value = id;
+            document.getElementById('edit_title').value = title;
+            document.getElementById('edit_content').value = content;
+            document.getElementById('edit_category').value = category;
+            document.getElementById('editWritingModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 

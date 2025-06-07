@@ -1,0 +1,534 @@
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+session_start();
+require_once __DIR__ . '/config/db_config.html';
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chokh Film Society - SUST</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="/assets/js/main.js"></script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            width: 100%;
+            padding-bottom: 60px;
+            /* Add space for footer */
+        }
+
+        .hero {
+            width: 100%;
+            height: 80vh;
+            position: relative;
+        }
+
+        .quick-links {
+            padding: 2rem 1rem;
+        }
+
+        /* --- Improved Quick Links Styling --- */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .link-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+            padding: 2rem 1rem;
+            text-decoration: none;
+            color: #222;
+            font-size: 1.1rem;
+            transition: box-shadow 0.2s, transform 0.2s;
+            min-height: 120px;
+        }
+
+        .link-card i {
+            font-size: 2.2rem;
+            margin-bottom: 0.7rem;
+            color: #e53935;
+        }
+
+        .link-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
+            transform: translateY(-4px) scale(1.03);
+            color: #e53935;
+        }
+
+        .link-card span {
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* --- Responsive for Quick Links --- */
+        @media (max-width: 900px) {
+            .links-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .links-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .link-card {
+                padding: 1.2rem 0.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        .sponsors {
+            padding: 2rem 1rem;
+            padding-bottom: 8rem;
+            /* Further increased padding after sponsors section */
+        }
+
+        .sponsor-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .sponsor-card img {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+
+        .sponsor-link {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .sponsor-link:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+
+            .quick-links,
+            .sponsors {
+                padding: 1rem 1rem;
+                padding-bottom: 7rem;
+                /* Adjusted padding for mobile */
+                padding-top: 2rem;
+            }
+
+            .links-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .sponsors-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .sponsor-card {
+                padding: 1.2rem;
+            }
+
+            .sponsor-link {
+                padding: 0.7rem 1.2rem;
+            }
+
+            .container {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 375px) {
+
+            .quick-links,
+            .sponsors {
+                padding: 0.5rem 0.8rem;
+                padding-bottom: 6rem;
+                /* Adjusted padding for smaller screens */
+                padding-top: 2rem;
+            }
+
+            .link-card,
+            .sponsor-card {
+                padding: 1rem;
+            }
+
+            .slideshow-container {
+                height: 250px;
+            }
+
+            .slide-caption {
+                padding: 0.8rem;
+            }
+
+            .slide-caption h2 {
+                font-size: 1.2rem;
+            }
+
+            .slide-caption p {
+                font-size: 0.9rem;
+            }
+
+            .sponsor-card {
+                padding: 1rem;
+            }
+
+            .sponsor-link {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .hero {
+                width: 100%;
+                height: 40vh;
+                position: relative;
+            }
+        }
+
+        /* Recent Writings Section */
+        .recent-writings {
+            padding: 4rem 2rem;
+            background: #f8f9fa;
+            text-align: center;
+        }
+
+        .recent-writings h2 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .writings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 0 auto;
+            max-width: 1200px;
+            padding: 0 1rem;
+        }
+
+        .writing-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: left;
+        }
+
+        .writing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .writing-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .writing-content {
+            padding: 1.5rem;
+        }
+
+        .writing-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .writing-content h3 {
+            margin: 0.5rem 0;
+            color: #333;
+            font-size: 1.4rem;
+            line-height: 1.4;
+        }
+
+        .writing-excerpt {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            text-align: justify;
+            font-size: 1.1rem;
+        }
+
+        .read-more {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        .read-more:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .view-all-container {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .view-all-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 1rem;
+        }
+
+        .view-all-btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .recent-writings {
+                padding: 3rem 1rem;
+            }
+
+            .recent-writings h2 {
+                font-size: 2rem;
+            }
+
+            .writings-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                max-width: 500px;
+            }
+            
+            .writing-card {
+                margin: 0 auto;
+            }
+
+            .writing-content h3 {
+                font-size: 1.2rem;
+            }
+
+            .writing-excerpt {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <img src="/assets/images/cfs.jpg" alt="CFS Logo" class="logo-img">
+            <h1>Chokh Film Society</h1>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-links">
+            <li><a href="/index.html" class="active">Home</a></li>
+            <li><a href="/pages/about.html">About</a></li>
+            <li><a href="/pages/committee.html">Committee</a></li>
+            <li><a href="/pages/gallery.html">Gallery</a></li>
+            <li><a href="/pages/contact.html">Contact</a></li>
+            <?php if(isset($_SESSION['admin_logged_in'])): ?>
+            <li><a href="/admin/dashboard.html">Admin</a></li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+
+    <!-- Hero Section with Slideshow -->
+    <section class="hero">
+        <div class="slideshow-container">
+            <?php
+            // Select random images from the gallery and join with events for details
+            $sql = "SELECT g.image_path, e.title, e.description FROM gallery g 
+                    JOIN events e ON g.event_id = e.id 
+                    ORDER BY RAND() LIMIT 10"; // Get 10 random images
+            $result = mysqli_query($conn, $sql);
+            
+            $slide_count = 0;
+            while($row = mysqli_fetch_assoc($result)) {
+                echo '<div class="slide fade">';
+                echo '<img src="/' . $row['image_path'] . '" alt="' . htmlspecialchars($row['title']) . '">'; // Use event title for alt text
+                echo '<div class="slide-caption">';
+                echo '<h2>' . htmlspecialchars($row['title']) . '</h2>'; // Display event title
+                echo '<p>' . htmlspecialchars(substr($row['description'], 0, 150)) . '...</p>'; // Display truncated description
+                echo '</div>';
+                echo '</div>';
+                $slide_count++;
+            }
+            // Debugging: Number of slide elements generated
+            echo "<!-- Number of slide elements generated: " . $slide_count . " -->";
+            ?>
+            <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+            <a class="next" onclick="changeSlide(1)">&#10095;</a>
+        </div>
+    </section>
+
+    <!-- Recent Writings Section -->
+    <section class="recent-writings">
+        <div class="container">
+            <h2>Recent Writings</h2>
+            <div class="writings-grid">
+                <?php
+                $sql = "SELECT * FROM writings ORDER BY created_at DESC LIMIT 3";
+                $result = mysqli_query($conn, $sql);
+                
+                while($row = mysqli_fetch_assoc($result)) {
+                    echo '<div class="writing-card">';
+                    if($row['image_path']) {
+                        echo '<img src="' . htmlspecialchars($row['image_path']) . '" alt="' . htmlspecialchars($row['title']) . '" class="writing-image">';
+                    }
+                    echo '<div class="writing-content">';
+                    echo '<span class="writing-category">' . ucfirst(htmlspecialchars($row['category'])) . '</span>';
+                    echo '<h3>' . htmlspecialchars($row['title']) . '</h3>';
+                    echo '<div class="writing-excerpt">' . nl2br(htmlspecialchars(substr($row['content'], 0, 150))) . '...</div>';
+                    echo '<a href="writing.html?id=' . $row['id'] . '" class="read-more">Read More</a>';
+                    echo '</div>';
+                    echo '</div>';
+                }
+                ?>
+            </div>
+            <div class="view-all-container">
+                <a href="writings.html" class="view-all-btn">View All Writings</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Links -->
+    <section class="quick-links">
+        <div class="container">
+            <h2>Quick Links</h2>
+            <div class="links-grid">
+                <a href="https://www.facebook.com/cfssust" target="_blank" class="link-card">
+                    <i class="fab fa-facebook"></i>
+                    <span>Follow us on Facebook</span>
+                </a>
+                <a href="/pages/gallery.html" class="link-card">
+                    <i class="fas fa-images"></i>
+                    <span>View Gallery</span>
+                </a>
+                <a href="/pages/contact.html" class="link-card">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact Us</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sponsors Section -->
+    <section class="sponsors">
+        <div class="container">
+            <h2>Our Sponsors</h2>
+            <div class="sponsors-grid">
+                <?php
+                $sql = "SELECT * FROM sponsors ORDER BY created_at DESC";
+                $result = mysqli_query($conn, $sql);
+                
+                while($row = mysqli_fetch_assoc($result)) {
+                    echo '<div class="sponsor-card">';
+                    if($row['logo_path']) {
+                        echo '<img src="/' . htmlspecialchars($row['logo_path']) . '" alt="' . htmlspecialchars($row['name']) . '">';
+                    }
+                    echo '<h3>' . htmlspecialchars($row['name']) . '</h3>';
+                    echo '<p>' . htmlspecialchars($row['description']) . '</p>';
+                    if($row['website_url']) {
+                        echo '<a href="' . htmlspecialchars($row['website_url']) . '" target="_blank" class="sponsor-link">Visit Website</a>';
+                    }
+                    echo '</div>';
+                }
+                ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy;
+                <?php echo date('Y'); ?> Chokh Film Society - SUST. All rights reserved. Built by <a
+                    href="https://www.facebook.com/Idealtech.dev" target="_blank">Ideal Tech Ltd.</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="/assets/js/slideshow.js"></script>
+    <script>
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function (event) {
+            const navLinks = document.querySelector('.nav-links');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+
+            if (!navLinks.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
+                navLinks.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+
+</html>

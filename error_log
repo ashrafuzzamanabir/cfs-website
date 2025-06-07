@@ -1,0 +1,113 @@
+[25-May-2025 20:33:28 UTC] PHP Warning:  require_once(/home/cfssustc/public_html/config/db_config.html): failed to open stream: No such file or directory in /home/cfssustc/public_html/index.html on line 2
+[25-May-2025 20:33:28 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/cfssustc/public_html/config/db_config.html' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/cfssustc/public_html/index.html on line 2
+[25-May-2025 20:33:30 UTC] PHP Warning:  require_once(/home/cfssustc/public_html/config/db_config.html): failed to open stream: No such file or directory in /home/cfssustc/public_html/index.html on line 2
+[25-May-2025 20:33:30 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/cfssustc/public_html/config/db_config.html' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/cfssustc/public_html/index.html on line 2
+[25-May-2025 20:33:38 UTC] PHP Warning:  require_once(/home/cfssustc/public_html/config/db_config.html): failed to open stream: No such file or directory in /home/cfssustc/public_html/index.html on line 2
+[25-May-2025 20:33:38 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/cfssustc/public_html/config/db_config.html' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/cfssustc/public_html/index.html on line 2
+[25-May-2025 20:34:11 UTC] PHP Warning:  require_once(/home/cfssustc/public_html/config/db_config.html): failed to open stream: No such file or directory in /home/cfssustc/public_html/index.html on line 2
+[25-May-2025 20:34:11 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/cfssustc/public_html/config/db_config.html' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/cfssustc/public_html/index.html on line 2
+[25-May-2025 20:34:30 UTC] PHP Warning:  require_once(/home/cfssustc/public_html/config/db_config.html): failed to open stream: No such file or directory in /home/cfssustc/public_html/index.html on line 2
+[25-May-2025 20:34:30 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/cfssustc/public_html/config/db_config.html' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/cfssustc/public_html/index.html on line 2
+[25-May-2025 20:39:21 UTC] PHP Warning:  require_once(/home/cfssustc/public_html/config/db_config.html): failed to open stream: No such file or directory in /home/cfssustc/public_html/index.html on line 2
+[25-May-2025 20:39:21 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/cfssustc/public_html/config/db_config.html' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/cfssustc/public_html/index.html on line 2
+[25-May-2025 20:39:22 UTC] PHP Warning:  require_once(/home/cfssustc/public_html/config/db_config.html): failed to open stream: No such file or directory in /home/cfssustc/public_html/index.html on line 2
+[25-May-2025 20:39:22 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/cfssustc/public_html/config/db_config.html' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/cfssustc/public_html/index.html on line 2
+[25-May-2025 20:55:17 UTC] PHP Warning:  mysqli_connect(): (42000/1044): Access denied for user 'cfssustc_admin'@'localhost' to database 'cfssustc_cfs' in /home/cfssustc/public_html/config/db_config.html on line 7
+[25-May-2025 20:55:20 UTC] PHP Warning:  mysqli_connect(): (42000/1044): Access denied for user 'cfssustc_admin'@'localhost' to database 'cfssustc_cfs' in /home/cfssustc/public_html/config/db_config.html on line 7
+[25-May-2025 21:23:52 UTC] PHP Parse error:  syntax error, unexpected '<', expecting end of file in /home/cfssustc/public_html/config/db_config.html on line 3
+[25-May-2025 21:24:16 UTC] PHP Parse error:  syntax error, unexpected '<', expecting end of file in /home/cfssustc/public_html/config/db_config.html on line 3
+[25-May-2025 21:24:19 UTC] PHP Parse error:  syntax error, unexpected '<', expecting end of file in /home/cfssustc/public_html/config/db_config.html on line 3
+[25-May-2025 21:24:30 UTC] PHP Parse error:  syntax error, unexpected '<', expecting end of file in /home/cfssustc/public_html/config/db_config.html on line 3
+[25-May-2025 21:25:27 UTC] PHP Parse error:  syntax error, unexpected '<', expecting end of file in /home/cfssustc/public_html/config/db_config.html on line 3
+[25-May-2025 21:25:35 UTC] PHP Parse error:  syntax error, unexpected '<', expecting end of file in /home/cfssustc/public_html/config/db_config.html on line 3
+[25-May-2025 21:25:38 UTC] PHP Parse error:  syntax error, unexpected '<', expecting end of file in /home/cfssustc/public_html/config/db_config.html on line 3
+[25-May-2025 21:25:48 UTC] PHP Parse error:  syntax error, unexpected '<', expecting end of file in /home/cfssustc/public_html/config/db_config.html on line 3
+[29-May-2025 06:27:15 UTC] PHP Notice:  session_start(): ps_files_cleanup_dir: opendir(/opt/alt/php72/var/lib/php/session) failed: Permission denied (13) in /home/cfssustc/public_html/index.html on line 3
+[06-Jun-2025 20:07:04 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writing.html:12
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writing.html on line 12
+[06-Jun-2025 20:07:07 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writing.html:12
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writing.html on line 12
+[06-Jun-2025 20:07:10 UTC] PHP Warning:  require_once(/home/cfssustc/public_html/config/db_config.php): failed to open stream: No such file or directory in /home/cfssustc/public_html/writings.html on line 2
+[06-Jun-2025 20:07:10 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/cfssustc/public_html/config/db_config.php' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/cfssustc/public_html/writings.html on line 2
+[06-Jun-2025 20:07:12 UTC] PHP Warning:  require_once(/home/cfssustc/public_html/config/db_config.php): failed to open stream: No such file or directory in /home/cfssustc/public_html/writings.html on line 2
+[06-Jun-2025 20:07:12 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/cfssustc/public_html/config/db_config.php' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/cfssustc/public_html/writings.html on line 2
+[06-Jun-2025 20:07:13 UTC] PHP Warning:  require_once(/home/cfssustc/public_html/config/db_config.php): failed to open stream: No such file or directory in /home/cfssustc/public_html/writings.html on line 2
+[06-Jun-2025 20:07:13 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/cfssustc/public_html/config/db_config.php' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/cfssustc/public_html/writings.html on line 2
+[06-Jun-2025 20:07:14 UTC] PHP Warning:  require_once(/home/cfssustc/public_html/config/db_config.php): failed to open stream: No such file or directory in /home/cfssustc/public_html/writings.html on line 2
+[06-Jun-2025 20:07:14 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/cfssustc/public_html/config/db_config.php' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/cfssustc/public_html/writings.html on line 2
+[06-Jun-2025 20:07:19 UTC] PHP Warning:  require_once(/home/cfssustc/public_html/config/db_config.php): failed to open stream: No such file or directory in /home/cfssustc/public_html/writings.html on line 2
+[06-Jun-2025 20:07:19 UTC] PHP Fatal error:  require_once(): Failed opening required '/home/cfssustc/public_html/config/db_config.php' (include_path='.:/opt/alt/php72/usr/share/pear') in /home/cfssustc/public_html/writings.html on line 2
+[06-Jun-2025 20:09:04 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writings.html:19
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writings.html on line 19
+[06-Jun-2025 20:09:07 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writings.html:19
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writings.html on line 19
+[06-Jun-2025 20:09:31 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writings.html:19
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writings.html on line 19
+[06-Jun-2025 20:09:36 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writing.html:12
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writing.html on line 12
+[06-Jun-2025 20:10:37 UTC] PHP Parse error:  syntax error, unexpected '<', expecting end of file in /home/cfssustc/public_html/config/db_config.html on line 2
+[06-Jun-2025 20:10:38 UTC] PHP Parse error:  syntax error, unexpected '<', expecting end of file in /home/cfssustc/public_html/config/db_config.html on line 2
+[06-Jun-2025 20:10:56 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writing.html:12
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writing.html on line 12
+[06-Jun-2025 20:11:01 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writings.html:19
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writings.html on line 19
+[06-Jun-2025 20:11:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writings.html:19
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writings.html on line 19
+[06-Jun-2025 20:11:40 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writings.html:19
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writings.html on line 19
+[07-Jun-2025 03:13:59 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writing.html:12
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writing.html on line 12
+[07-Jun-2025 03:25:19 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writings.html:19
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writings.html on line 19
+[07-Jun-2025 03:35:45 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writing.html:12
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writing.html on line 12
+[07-Jun-2025 03:52:42 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writing.html:12
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writing.html on line 12
+[07-Jun-2025 04:00:31 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writing.html:12
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writing.html on line 12
+[07-Jun-2025 04:07:41 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writings.html:19
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writings.html on line 19
+[07-Jun-2025 14:02:18 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writing.html:12
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writing.html on line 12
+[07-Jun-2025 14:02:20 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writing.html:12
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writing.html on line 12
+[07-Jun-2025 14:02:22 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function mysqli_stmt_get_result() in /home/cfssustc/public_html/writings.html:19
+Stack trace:
+#0 {main}
+  thrown in /home/cfssustc/public_html/writings.html on line 19

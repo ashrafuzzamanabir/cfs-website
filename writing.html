@@ -1,0 +1,136 @@
+<?php
+require_once __DIR__ . '/config/db_config.html';
+
+// Get writing ID from URL
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+if ($id > 0) {
+    $id_safe = mysqli_real_escape_string($conn, $id);
+    $sql = "SELECT * FROM writings WHERE id = '$id_safe'";
+    $result = mysqli_query($conn, $sql);
+    $writing = mysqli_fetch_assoc($result);
+} else {
+    header("Location: writings.html");
+    exit();
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars($writing['title']); ?> - Chokh Film Society</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .writing-container {
+            padding: 2rem;
+            margin-top: 60px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .writing-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .writing-category {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .writing-title {
+            margin: 0.5rem 0;
+            color: #333;
+        }
+        .writing-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        .writing-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .writing-content {
+            color: #333;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        .writing-content p {
+            margin-bottom: 1.5rem;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .writing-container {
+                padding: 1rem;
+            }
+            .writing-title {
+                font-size: 1.5rem;
+            }
+            .writing-content {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="/assets/images/cfs.jpg" alt="CFS Logo" class="logo-img">
+            <h1>Chokh Film Society</h1>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-links">
+            <li><a href="/index.html">Home</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/committee.html">Committee</a></li>
+            <li><a href="/advisors.html">Advisors</a></li>
+            <li><a href="/sponsors.html">Sponsors</a></li>
+            <li><a href="/writings.html" class="active">Writings</a></li>
+            <li><a href="/contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="writing-container">
+        <div class="writing-header">
+            <span class="writing-category"><?php echo ucfirst(htmlspecialchars($writing['category'])); ?></span>
+            <h1 class="writing-title"><?php echo htmlspecialchars($writing['title']); ?></h1>
+            <div class="writing-meta">
+                Published on <?php echo date('F j, Y', strtotime($writing['created_at'])); ?>
+            </div>
+        </div>
+
+        <?php if($writing['image_path']): ?>
+            <img src="<?php echo htmlspecialchars($writing['image_path']); ?>" alt="<?php echo htmlspecialchars($writing['title']); ?>" class="writing-image">
+        <?php endif; ?>
+
+        <div class="writing-content">
+            <?php echo nl2br(htmlspecialchars($writing['content'])); ?>
+        </div>
+
+        <a href="writings.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Writings
+        </a>
+    </div>
+
+    <script src="/assets/js/main.js"></script>
+</body>
+</html> 

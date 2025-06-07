@@ -1,0 +1,167 @@
+<?php
+require_once __DIR__ . '/../config/db_config.html';
+
+// Get about page content
+$sql = "SELECT * FROM about_page WHERE id = 1";
+$result = mysqli_query($conn, $sql);
+$about_content = mysqli_fetch_assoc($result);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Chokh Film Society</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --accent-color: #007bff;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+            position: relative;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .about-container {
+            padding: 2rem;
+            margin-top: 60px;
+            flex: 1;
+            width: 100%;
+            box-sizing: border-box;
+            padding-bottom: 8rem;
+        }
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .about-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .about-header h2 {
+            color: #000000;
+            margin-bottom: 1rem;
+        }
+        .about-text {
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            color: #000000;
+            white-space: pre-wrap;
+            font-family: inherit;
+        }
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .social-link {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+        .social-link:hover {
+            background-color: #c4000f;
+        }
+        .social-link i {
+            margin-right: 0.5rem;
+        }
+        @media (max-width: 768px) {
+            .social-link {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: calc(50% - 0.5rem);
+            }
+        }
+        @media (max-width: 480px) {
+            .social-link {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="/assets/images/cfs.jpg" alt="CFS Logo" class="logo-img">
+            <h1>Chokh Film Society</h1>
+        </div>
+        <button class="mobile-menu-btn" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <ul class="nav-links">
+            <li><a href="/index.html">Home</a></li>
+            <li><a href="/pages/about.html" class="active">About</a></li>
+            <li><a href="/pages/committee.html">Committee</a></li>
+            <li><a href="/pages/gallery.html">Gallery</a></li>
+            <li><a href="/pages/contact.html">Contact</a></li>
+            <?php if(isset($_SESSION['admin_logged_in'])): ?>
+                <li><a href="/admin/dashboard.html">Admin</a></li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+
+    <div class="about-container">
+        <div class="about-content">
+            <div class="about-header">
+                <h2>About Chokh Film Society</h2>
+                <p>Promoting Film Culture at SUST Since 1996</p>
+            </div>
+            
+            <div class="about-text">
+                <?php 
+                $about_text = $about_content['about_text'] ?? '';
+                // Replace literal string '\r\n' and '\n' with actual newline characters
+                $about_text = str_replace(['\\r\\n', '\\n'], ["\n", "\n"], $about_text);
+                // Convert actual newlines to HTML breaks and escape other characters
+                echo nl2br(htmlspecialchars($about_text)); 
+                ?>
+            </div>
+            
+            <div class="social-links">
+                <?php if (!empty($about_content['facebook_link'])): ?>
+                    <a href="<?php echo htmlspecialchars($about_content['facebook_link']); ?>" target="_blank" class="social-link">
+                        <i class="fab fa-facebook"></i> Facebook
+                    </a>
+                <?php endif; ?>
+                <?php if (!empty($about_content['instagram_link'])): ?>
+                    <a href="<?php echo htmlspecialchars($about_content['instagram_link']); ?>" target="_blank" class="social-link">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </a>
+                <?php endif; ?>
+                <?php if (!empty($about_content['email_address'])): ?>
+                    <a href="mailto:<?php echo htmlspecialchars($about_content['email_address']); ?>" class="social-link">
+                        <i class="fas fa-envelope"></i> Email Us
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; <?php echo date('Y'); ?> Chokh Film Society - SUST. All rights reserved. Built by <a href="https://www.facebook.com/Idealtech.dev" target="_blank">Ideal Tech Ltd.</a></p>
+        </div>
+    </footer>
+
+    <script src="/assets/js/main.js"></script>
+</body>
+</html> 
